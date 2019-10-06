@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Input } from "../common";
 
-import numbers from "./../numbers";
-
 export const QuotesPage = () => {
   const [inputs, setValues] = useState({ min: "", max: "", length: "" });
   const [array, setArray] = useState([0]);
@@ -25,20 +23,14 @@ export const QuotesPage = () => {
 
   const generateArray = () => {
     const { min, max, length } = inputs;
-    let newArray = [];
-    meterPerf(() => {
-      for (let i = 0; i < length; i++) {
-        newArray.push(randomNumber(min, max));
-      }
-      return newArray;
-    }, setTimeGen);
-    setArray(newArray);
-    computedStatisticValues();
-  };
-
-  const computedStatisticValues = () => {
+    let array = [];
     let mean = 0;
     let dev = 0;
+    meterPerf(() => {
+      for (let i = 0; i < length; i++) {
+        array.push(randomNumber(min, max));
+      }
+    }, setTimeGen);
     meterPerf(() => {
       let sum = 0;
       let sum2 = 0;
