@@ -27,6 +27,29 @@ body {
     border: 1px solid grey;
     border-radius: 5px;
 }
+.navigation {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+.nav-item:hover {
+    cursor: pointer;
+    background: #22a853;
+}
+.nav-item {
+    color: #f0faec;
+    font-weight: bold;
+    border-radius: 5px;
+    background: #ffd44d;
+    margin:0 10px;
+    padding: 8px 75px 7px;
+    text-decoration: none;
+    transition: .2s;
+}
+.selected {
+    background: #22a853;
+}
 .results-container {
     padding: 0 10px;
     border: 1px solid grey;
@@ -44,7 +67,6 @@ body {
     margin: 15px 0;
 }
 .button {
-    /*align-self: center;*/
     width: 100%;
     max-width: 500px;
     padding: 8px 8px 7px;
@@ -55,6 +77,8 @@ body {
     background: #ffd44d;
     color: #f5ffec;
     font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
 }
 .button:hover {
     background: #22a853;
@@ -65,7 +89,6 @@ body {
     flex-wrap: wrap;
     width: 100%;
     align-items: center;
-    /*justify-content: center;*/
     margin: 15px 10px;
 }
 .input-group_label {
