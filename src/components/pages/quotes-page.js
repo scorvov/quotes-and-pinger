@@ -1,54 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "../common";
 
 export const QuotesPage = () => {
-  const [inputs, setValues] = useState({ min: "", max: "", length: "" });
-  const [array, setArray] = useState([0]);
-  const [mean, setMean] = useState(0);
-  const [dev, setDev] = useState(0);
-  const [timeGen, setTimeGen] = useState(0);
-  const [timeComp, setTimeComp] = useState(0);
+  const [inputs, setInputs] = useState({ min: "", max: "", length: "" });
+  const [values, setValues] = useState({ mean: 0, dev: 0 });
+  const [time, setTime] = useState({ gen: 0, calc: 0 });
 
   const randomNumber = (min, max) => {
     min = min | 0;
-    // max = ~~max;
     return (Math.random() * (max - min + 1) + min) | 0;
   };
-  const meterPerf = (func, setter) => {
+  /*  const meterPerf = (func) => {
     let time = performance.now();
     func();
     time = performance.now() - time;
-    setter(time);
-  };
+  };*/
 
-  const generateArray = () => {
+  const generateArray = async () => {
     const { min, max, length } = inputs;
-    let array = [];
     let mean = 0;
     let dev = 0;
-    meterPerf(() => {
-      for (let i = 0; i < length; i++) {
-        array.push(randomNumber(min, max));
+    let sum = 0;
+    let sum2 = 0;
+    let i = 0;
+    for (i; i < length; i++) {
+      let x = randomNumber(min, max);
+      sum += x;
+      sum2 += x ** 2;
+      if (i && (i % 1000000 === 0 || i === length - 1)) {
+        mean = sum / i;
+        dev = Math.sqrt(sum2 / i - mean ** 2);
+        await setValues({ mean, dev });
       }
-    }, setTimeGen);
-    meterPerf(() => {
-      let sum = 0;
-      let sum2 = 0;
-      const length = array.length;
-      for (let i = 0; i < length; i++) {
-        sum += array[i];
-        sum2 += array[i] ** 2;
-      }
-      mean = sum / length;
-      dev = Math.sqrt(sum2 / length - mean ** 2);
-    }, setTimeComp);
-    setMean(mean);
-    setDev(dev);
+    }
   };
 
   const handleInput = e => {
-    setValues({ ...inputs, [e.target.id]: e.target.value });
+    setInputs({ ...inputs, [e.target.id]: e.target.value });
   };
+  useEffect(() => console.log(values), [values]);
+
   return (
     <>
       <h1 className={"header"}>Quotes</h1>
@@ -85,11 +76,11 @@ export const QuotesPage = () => {
       <div className={"results-container"}>
         <div className={"result"}>
           <b>Среднее:&nbsp;</b>
-          <p>{mean}</p>
+          <p>{values.mean}</p>
         </div>
         <div className={"result"}>
           <b>Стандартное отклонение:&nbsp;</b>
-          <p>{dev}</p>
+          <p>{values.dev}</p>
         </div>
         <div className={"result"}>
           <b>Мода:&nbsp;</b>
@@ -102,11 +93,11 @@ export const QuotesPage = () => {
         <hr />
         <div className={"result"}>
           <b>Время генерации:&nbsp;</b>
-          <p>{`${timeGen} мс`}</p>
+          <p>{`${time.gen} мс`}</p>
         </div>
         <div className={"result"}>
           <b>Время расчетов:&nbsp;</b>
-          <p>{`${timeComp} мс`}</p>
+          <p>{`${time.calc} мс`}</p>
         </div>
       </div>
     </>
