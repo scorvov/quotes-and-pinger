@@ -7,6 +7,15 @@ export const QuotesPage = () => {
   const [values, setValues] = useState({ mean: 0, dev: 0 });
   const [time, setTime] = useState({ gen: 0, calc: 0 });
 
+  const clearParameters = () => {
+    setValues({ mean: 0, dev: 0 });
+    setTime({ gen: 0, calc: 0 });
+  };
+  const handleInput = e => {
+    setInputs({ ...inputs, [e.target.id]: e.target.value });
+    clearParameters();
+  };
+
   const performanceMeter = (func, type) => {
     let newTime = performanceTime(func);
     setTime(time => ({ ...time, [type]: time[type] + newTime }));
@@ -41,14 +50,7 @@ export const QuotesPage = () => {
     intervalId = setInterval(funcInterval, 80);
   };
 
-  const clearParameters = () => {
-    setValues({ mean: 0, dev: 0 });
-    setTime({ gen: 0, calc: 0 });
-  };
-  const handleInput = e => {
-    setInputs({ ...inputs, [e.target.id]: e.target.value });
-    clearParameters();
-  };
+
   return (
     <>
       <h1 className={"header"}>Quotes</h1>
@@ -90,14 +92,6 @@ export const QuotesPage = () => {
         <div className={"result"}>
           <b>Standard deviation:&nbsp;</b>
           <p>{values.dev}</p>
-        </div>
-        <div className={"result"}>
-          <b>Mode:&nbsp;</b>
-          <p>0</p>
-        </div>
-        <div className={"result"}>
-          <b>Median:&nbsp;</b>
-          <p>0</p>
         </div>
         <hr />
         <div className={"result"}>
