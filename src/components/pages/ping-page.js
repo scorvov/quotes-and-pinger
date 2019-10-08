@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Input } from "../common";
-import Ping from "./../utils/ping";
+import { Ping } from "./../utils/ping";
 
 const check = new Ping();
 
@@ -19,11 +19,11 @@ export const PingPage = () => {
   };
   return (
     <>
-      <h1 className={"header"}>Ping</h1>
+      <h1 className={"header"}>Pinger</h1>
       <div className={"container"}>
         <Input
           type="text"
-          label={"Введите адрес сервера"}
+          label={"Enter server address"}
           value={url}
           onChange={handleInput}
         />
@@ -31,7 +31,7 @@ export const PingPage = () => {
           Ping
         </button>
         <div className={"result"}>
-          <b>Результат: </b>
+          <b>Result: </b>
           <p>{result}</p>
         </div>
       </div>

@@ -23,9 +23,10 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 0 10px;
+    padding: 5px 10px;
     border: 1px solid grey;
     border-radius: 5px;
+
 }
 .navigation {
     display: flex;
@@ -51,7 +52,7 @@ body {
     background: #22a853;
 }
 .results-container {
-    padding: 0 10px;
+    padding: 5px 10px;
     border: 1px solid grey;
     border-radius: 5px;
 }
@@ -60,7 +61,6 @@ body {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-
 }
 .header {
     text-align: center;
@@ -92,7 +92,7 @@ body {
     margin: 15px 10px;
 }
 .input-group_label {
-    width: 180px;
+    width: 225px;
     font-weight: bold;
     margin-bottom: 4px;
 }

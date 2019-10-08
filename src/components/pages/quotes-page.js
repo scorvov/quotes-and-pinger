@@ -1,51 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input } from "../common";
+import { calculate, generateArray, performanceTime } from "../utils/quotes";
 
 export const QuotesPage = () => {
   const [inputs, setInputs] = useState({ min: "", max: "", length: "" });
   const [values, setValues] = useState({ mean: 0, dev: 0 });
   const [time, setTime] = useState({ gen: 0, calc: 0 });
 
-  const randomNumber = (min, max) => {
-    min = min | 0;
-    return (Math.random() * (max - min + 1) + min) | 0;
+  const performanceMeter = (func, type) => {
+    let newTime = performanceTime(func);
+    setTime(time => ({ ...time, [type]: time[type] + newTime }));
   };
-  /*  const meterPerf = (func) => {
-    let time = performance.now();
-    func();
-    time = performance.now() - time;
-  };*/
 
-  const generateArray = async () => {
+  const calcStream = () => {
+    clearParameters();
     const { min, max, length } = inputs;
-    let mean = 0;
-    let dev = 0;
-    let sum = 0;
-    let sum2 = 0;
-    let i = 0;
-    for (i; i < length; i++) {
-      let x = randomNumber(min, max);
-      sum += x;
-      sum2 += x ** 2;
-      if (i && (i % 1000000 === 0 || i === length - 1)) {
-        mean = sum / i;
-        dev = Math.sqrt(sum2 / i - mean ** 2);
-        await setValues({ mean, dev });
-      }
-    }
+    let array = [];
+    let newValues;
+    let intervals = [Math.trunc(length / 1000000), length % 1000000];
+    let intervalId = null;
+    let j = 0;
+    let funcInterval = () => {
+      let myLength = j < intervals[0] ? 1000000 : intervals[1];
+      if (j <= intervals[0] && myLength) {
+        j++;
+        performanceMeter(() => {
+          array = generateArray({ min, max, length: myLength });
+        }, "gen");
+        performanceMeter(() => {
+          newValues = calculate(array);
+          array = [];
+        }, "calc");
+        setValues(values => {
+          let mean = (values.mean + newValues.mean) / 2;
+          let dev = (values.dev + newValues.dev) / 2;
+          return { mean, dev };
+        });
+      } else clearTimeout(intervalId);
+    };
+    intervalId = setInterval(funcInterval, 80);
   };
 
+  const clearParameters = () => {
+    setValues({ mean: 0, dev: 0 });
+    setTime({ gen: 0, calc: 0 });
+  };
   const handleInput = e => {
     setInputs({ ...inputs, [e.target.id]: e.target.value });
+    clearParameters();
   };
-  useEffect(() => console.log(values), [values]);
-
   return (
     <>
       <h1 className={"header"}>Quotes</h1>
       <div className="container">
         <Input
-          label={"Min значение числа"}
+          label={"Minimum value of the number"}
           type="number"
           placeholder={"min"}
           value={inputs.min}
@@ -53,7 +62,7 @@ export const QuotesPage = () => {
           id={"min"}
         />
         <Input
-          label={"Max значение числа"}
+          label={"Maximum value of the number"}
           type="number"
           placeholder={"max"}
           value={inputs.max}
@@ -61,42 +70,42 @@ export const QuotesPage = () => {
           id={"max"}
         />
         <Input
-          label={"Введите длину массива"}
+          label={"Array length"}
           type="number"
           placeholder={"length"}
           value={inputs.length}
           onChange={handleInput}
           id={"length"}
         />
-        <button className={"button"} onClick={() => generateArray()}>
+        <button className={"button"} onClick={calcStream}>
           Generate quotes
         </button>
       </div>
       <h2 className={"header"}>Results</h2>
       <div className={"results-container"}>
         <div className={"result"}>
-          <b>Среднее:&nbsp;</b>
+          <b>Average:&nbsp;</b>
           <p>{values.mean}</p>
         </div>
         <div className={"result"}>
-          <b>Стандартное отклонение:&nbsp;</b>
+          <b>Standard deviation:&nbsp;</b>
           <p>{values.dev}</p>
         </div>
         <div className={"result"}>
-          <b>Мода:&nbsp;</b>
+          <b>Mode:&nbsp;</b>
           <p>0</p>
         </div>
         <div className={"result"}>
-          <b>Медиана:&nbsp;</b>
+          <b>Median:&nbsp;</b>
           <p>0</p>
         </div>
         <hr />
         <div className={"result"}>
-          <b>Время генерации:&nbsp;</b>
+          <b>Generation time:&nbsp;</b>
           <p>{`${time.gen} мс`}</p>
         </div>
         <div className={"result"}>
-          <b>Время расчетов:&nbsp;</b>
+          <b>Computation time:&nbsp;</b>
           <p>{`${time.calc} мс`}</p>
         </div>
       </div>
